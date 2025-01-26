@@ -42,7 +42,7 @@ def update_chat(n_clicks, user_input):
         # Envoyer le message à l'API Flask (backend)
         try:
             response = requests.post(
-                "http://0.0.0.0:5000/chat",  # URL de ton backend Flask
+                "http://backend:5000/chat",  # URL de ton backend Flask
                 # "http://127.0.0.1:5000/chat",  # URL de ton backend Flask
                 #"http://localhost:5000/chat",
                 json={"message": user_input}
@@ -62,4 +62,4 @@ def update_chat(n_clicks, user_input):
 
 # Lancer le serveur Dash
 if __name__ == "__main__":
-    app.run_server(debug=True)
+    app.run_server(host="0.0.0.0", port=8050)  # Ecoute sur toutes les interfaces
