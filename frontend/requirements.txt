@@ -1,0 +1,2 @@
+dash                   # Framework pour créer des interfaces web interactives
+requests               # Pour effectuer des requêtes HTTP vers le backend

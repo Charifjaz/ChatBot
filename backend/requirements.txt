@@ -1,0 +1,3 @@
+flask                  # Pour créer l'API Flask
+torch==2.0.1+cpu -f https://download.pytorch.org/whl/torch_stable.html     # Pour exécuter les modèles de Transformers
+transformers           # Pour interagir avec le modèle GPT

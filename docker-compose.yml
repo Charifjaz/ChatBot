@@ -1,0 +1,17 @@
+version: "3.8"
+services:
+  backend:
+    build:
+      context: ./backend
+    ports:
+      - "5000:5000"  # Expose le port 5000 pour le backend
+    container_name: chatbot_backend
+
+  frontend:
+    build:
+      context: ./frontend
+    ports:
+      - "8050:8050"  # Expose le port 8050 pour le frontend
+    container_name: chatbot_frontend
+    depends_on:
+      - backend  # Le frontend dépend du backend
