@@ -3,6 +3,8 @@ services:
   backend:
     build:
       context: ./backend
+      # dockerfile: ./Dockerfile  # Spécifie le Dockerfile dans le répertoire backend
+
     ports:
       - "5000:5000"  # Expose le port 5000 pour le backend
     container_name: chatbot_backend
