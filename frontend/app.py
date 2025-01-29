@@ -1,35 +1,40 @@
 from dash import Dash, html, dcc, Input, Output, State
 import requests
+from datetime import datetime
 
-# Créer l'application Dash
-app = Dash(__name__)
+app = Dash(__name__, assets_folder="assets", suppress_callback_exceptions=True)
 
-# Structure de la page
-app.layout = html.Div([
-    html.H1("Chatbot GPT avec Dash", style={"textAlign": "center"}),
-
-    dcc.Textarea(
-        id="user-input",
-        placeholder="Écrivez votre message ici...",
-        style={"width": "100%", "height": "100px"}
-    ),
-    html.Button("Envoyer", id="submit-button", n_clicks=0),
-
-    html.Div(id="chat-history", children=[], style={
-        "marginTop": "20px",
-        "padding": "10px",
-        "border": "1px solid #ccc",
-        "borderRadius": "5px",
-        "height": "300px",
-        "overflowY": "scroll",
-        "backgroundColor": "#f9f9f9"
-    })
-])
-
-# Historique des messages
+# Initialiser chat_history avant de l'utiliser
 chat_history = []
 
-# Callback pour gérer l'envoi et l'affichage des messages
+
+app.layout = html.Div([
+    html.Div(className="main-container", children=[
+        html.Header(className="header", children=[
+            html.H1("Charif Is Listenning ! How Can I help you ?", className="title")
+        ]),
+        
+        html.Div(className="chat-container", children=[
+            html.Div(id="chat-history", className="chat-history"),
+            
+            html.Div(className="input-wrapper", children=[
+                dcc.Textarea(
+                    id="user-input",
+                    className="input-field",
+                    placeholder="Waiting for your Inouts !",
+                    spellCheck=True
+                ),
+                html.Button(
+                    html.Div(className="send-arrow"),
+                    id="submit-button",
+                    className="send-button",
+                    n_clicks=0
+                )
+            ])
+        ])
+    ])
+])
+
 @app.callback(
     Output("chat-history", "children"),
     [Input("submit-button", "n_clicks")],
@@ -37,29 +42,39 @@ chat_history = []
 )
 def update_chat(n_clicks, user_input):
     global chat_history
-
+    
     if n_clicks > 0 and user_input:
-        # Envoyer le message à l'API Flask (backend)
         try:
             response = requests.post(
-                "http://0.0.0.0:5000/chat",  # URL de ton backend Flask
-                # "http://127.0.0.1:5000/chat",  # URL de ton backend Flask
-                #"http://localhost:5000/chat",
+                # "http://backend:5000/chat",
+                "http://localhost:5000/chat",
                 json={"message": user_input}
             )
             bot_response = response.json().get("response", "Erreur : Pas de réponse.")
         except Exception as e:
             bot_response = f"Erreur de connexion : {e}"
 
-        # Ajouter le message utilisateur et la réponse du bot à l'historique
-        chat_history.append(html.Div([
-            html.P(f"👤 Utilisateur : {user_input}", style={"color": "blue"}),
-            html.P(f"🤖 Bot : {bot_response}", style={"color": "green"})
-        ]))
+        # Message utilisateur
+        user_message = html.Div(
+            html.Div([
+                html.P(user_input, className="message-text"),
+                html.Span(datetime.now().strftime("%H:%M"), className="message-time")
+            ]),
+            className="message user"
+        )
+        
+        # Message bot
+        bot_message = html.Div(
+            html.Div([
+                html.P(bot_response, className="message-text"),
+                html.Span(datetime.now().strftime("%H:%M"), className="message-time")
+            ]),
+            className="message bot"
+        )
 
-    # Réinitialiser le champ d'entrée
+        chat_history.extend([user_message, bot_message])
+    
     return chat_history
 
-# Lancer le serveur Dash
 if __name__ == "__main__":
     app.run_server(debug=True)
