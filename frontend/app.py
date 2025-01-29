@@ -4,11 +4,14 @@ from datetime import datetime
 
 app = Dash(__name__, assets_folder="assets", suppress_callback_exceptions=True)
 
+# Initialiser chat_history avant de l'utiliser
+chat_history = []
+
+
 app.layout = html.Div([
     html.Div(className="main-container", children=[
-        html.Div(className="title-container", children=[
-            html.H1("CHARIF AI", className="title"),
-            html.Div(className="title-backdrop")
+        html.Header(className="header", children=[
+            html.H1("Charif Is Listenning ! How Can I help you ?", className="title")
         ]),
         
         html.Div(className="chat-container", children=[
@@ -18,7 +21,7 @@ app.layout = html.Div([
                 dcc.Textarea(
                     id="user-input",
                     className="input-field",
-                    placeholder="Écrivez votre message...",
+                    placeholder="Waiting for your Inouts !",
                     spellCheck=True
                 ),
                 html.Button(
@@ -43,7 +46,8 @@ def update_chat(n_clicks, user_input):
     if n_clicks > 0 and user_input:
         try:
             response = requests.post(
-                "http://backend:5000/chat",
+                # "http://backend:5000/chat",
+                "http://localhost:5000/chat",
                 json={"message": user_input}
             )
             bot_response = response.json().get("response", "Erreur : Pas de réponse.")
